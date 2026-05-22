@@ -29,7 +29,8 @@ const fadeUp = {
   show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.55, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] } }),
 };
 
-const MotionBox = motion.create(Box);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MotionBox = motion.create(Box) as any;
 
 const FEATURES = [
   {
@@ -103,7 +104,7 @@ export default function RootPage() {
     <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh' }}>
 
       {/* Navbar */}
-      <Box component={motion.div} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} sx={{ position: 'sticky', top: 0, zIndex: 100, bgcolor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(226,232,240,0.8)', boxShadow: '0 1px 12px rgba(15,23,42,0.06)' }}>
+      <MotionBox initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} sx={{ position: 'sticky', top: 0, zIndex: 100, bgcolor: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(226,232,240,0.8)', boxShadow: '0 1px 12px rgba(15,23,42,0.06)' }}>
         <Container maxWidth="lg">
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5 }}>
             <Box sx={{ cursor: 'pointer' }} onClick={() => router.push('/')}>
@@ -123,7 +124,7 @@ export default function RootPage() {
             </Box>
           </Box>
         </Container>
-      </Box>
+      </MotionBox>
 
       {/* Hero */}
       <Box sx={{ background: 'linear-gradient(160deg, #EFF6FF 0%, #F0F9FF 60%, #ffffff 100%)', pt: { xs: 8, md: 10 }, pb: { xs: 6, md: 8 }, overflow: 'hidden' }}>
