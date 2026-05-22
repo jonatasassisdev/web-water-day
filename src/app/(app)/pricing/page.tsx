@@ -27,6 +27,7 @@ import CreditCardOutlined from '@mui/icons-material/CreditCardOutlined';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import useSWR from 'swr';
 import { paymentsApi } from '@/lib/api/payments';
+import { useAuthStore } from '@/stores/auth.store';
 
 const FREE_FEATURES = [
   'Registro de consumo de água',
@@ -98,6 +99,7 @@ function formatCPF(value: string) {
 
 export default function PricingPage() {
   const { data: status, mutate } = useSWR('payment-status', paymentsApi.status);
+  const { setPremium } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -157,6 +159,7 @@ export default function PricingPage() {
 
       if (result.active || result.alreadyActive) {
         setSuccess(true);
+        setPremium(true);
         await mutate();
         setTimeout(() => {
           setOpen(false);

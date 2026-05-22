@@ -31,6 +31,7 @@ import { useDietProtocol } from '@/lib/hooks/useDietProtocol';
 import DietOnboardingModal from '@/components/diet/DietOnboardingModal';
 import TodayTracking from '@/components/diet/TodayTracking';
 import { MealSlot, SupplementRecommendation } from '@/lib/api/diet-protocol';
+import PremiumGate from '@/components/ui/PremiumGate';
 
 const MEAL_LABELS: Record<string, string> = {
   breakfast: 'Café da manhã',
@@ -255,6 +256,7 @@ export default function DietProtocolPage() {
   const [tab, setTab] = useState(0);
 
   return (
+    <PremiumGate feature="Protocolo de Dieta">
     <Box sx={{ px: { xs: 2, sm: 4, md: 6 }, py: { xs: 3, md: 4 }, maxWidth: 1280, mx: 'auto' }}>
       {/* Page header */}
       <Box sx={{ mb: 3, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
@@ -333,5 +335,6 @@ export default function DietProtocolPage() {
 
       <DietOnboardingModal open={modalOpen} onClose={() => setModalOpen(false)} onDone={() => setModalOpen(false)} />
     </Box>
+    </PremiumGate>
   );
 }

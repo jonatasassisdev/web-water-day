@@ -20,6 +20,7 @@ export interface User {
   name: string;
   avatarUrl?: string | null;
   createdAt: string;
+  isPremium: boolean;
 }
 
 export interface AuthResponse {

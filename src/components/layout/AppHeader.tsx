@@ -15,6 +15,7 @@ import GridViewRounded from '@mui/icons-material/GridViewRounded';
 import WaterDropOutlined from '@mui/icons-material/WaterDropOutlined';
 import RestaurantMenuOutlined from '@mui/icons-material/RestaurantMenuOutlined';
 import WorkspacePremiumOutlined from '@mui/icons-material/WorkspacePremiumOutlined';
+import LockOutlined from '@mui/icons-material/LockOutlined';
 import { useSnackbar } from 'notistack';
 import Logo from '@/components/ui/Logo';
 import { useAuthStore } from '@/stores/auth.store';
@@ -22,17 +23,17 @@ import { useDailySummary } from '@/lib/hooks/useDashboard';
 import { usersApi } from '@/lib/api/users';
 
 const NAV_LINKS = [
-  { label: 'Dashboard', href: '/dashboard', icon: GridViewRounded },
-  { label: 'Hidratação', href: '/hydration', icon: WaterDropOutlined },
-  { label: 'Dieta', href: '/diet-protocol', icon: RestaurantMenuOutlined },
-  { label: 'Configurações', href: '/settings', icon: SettingsOutlined },
-  { label: 'Premium', href: '/pricing', icon: WorkspacePremiumOutlined, highlight: true },
+  { label: 'Dashboard', href: '/dashboard', icon: GridViewRounded, premium: false },
+  { label: 'Hidratação', href: '/hydration', icon: WaterDropOutlined, premium: true },
+  { label: 'Dieta', href: '/diet-protocol', icon: RestaurantMenuOutlined, premium: true },
+  { label: 'Configurações', href: '/settings', icon: SettingsOutlined, premium: false },
 ];
 
 export default function AppHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout, setAvatar } = useAuthStore();
+  const isPremium = user?.isPremium ?? false;
   const { summary, isLoading } = useDailySummary();
   const { enqueueSnackbar } = useSnackbar();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,13 +91,13 @@ export default function AppHeader() {
           component="nav"
           sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5 }}
         >
-          {NAV_LINKS.map(({ label, href, icon: Icon, highlight }) => {
+          {NAV_LINKS.map(({ label, href, icon: Icon, premium }) => {
             const active = pathname === href;
-            if (highlight) {
-              return (
+            const locked = premium && !isPremium;
+            return (
+              <Tooltip key={href} title={locked ? 'Recurso Premium — faça upgrade' : ''} arrow>
                 <Box
-                  key={href}
-                  onClick={() => router.push(href)}
+                  onClick={() => router.push(locked ? '/pricing' : href)}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -105,44 +106,57 @@ export default function AppHeader() {
                     py: 0.75,
                     borderRadius: 2,
                     cursor: 'pointer',
-                    fontWeight: 700,
+                    fontWeight: active ? 700 : 500,
                     fontSize: '0.875rem',
-                    color: active ? '#7C3AED' : '#7C3AED',
-                    backgroundColor: active ? 'rgba(124,58,237,0.1)' : 'rgba(124,58,237,0.06)',
+                    color: locked ? '#94A3B8' : active ? '#2563EB' : '#64748B',
+                    backgroundColor: active && !locked ? 'rgba(37,99,235,0.07)' : 'transparent',
                     transition: 'all 0.15s ease',
-                    '&:hover': { backgroundColor: 'rgba(124,58,237,0.12)' },
+                    '&:hover': locked
+                      ? { color: '#7C3AED', backgroundColor: 'rgba(124,58,237,0.05)' }
+                      : { color: '#2563EB', backgroundColor: 'rgba(37,99,235,0.05)' },
                   }}
                 >
                   <Icon sx={{ fontSize: 16 }} />
                   {label}
+                  {locked && <LockOutlined sx={{ fontSize: 12, ml: 0.25, opacity: 0.7 }} />}
                 </Box>
-              );
-            }
-            return (
-              <Box
-                key={href}
-                onClick={() => router.push(href)}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.75,
-                  px: 1.5,
-                  py: 0.75,
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  fontWeight: active ? 700 : 500,
-                  fontSize: '0.875rem',
-                  color: active ? '#2563EB' : '#64748B',
-                  backgroundColor: active ? 'rgba(37,99,235,0.07)' : 'transparent',
-                  transition: 'all 0.15s ease',
-                  '&:hover': { color: '#2563EB', backgroundColor: 'rgba(37,99,235,0.05)' },
-                }}
-              >
-                <Icon sx={{ fontSize: 16 }} />
-                {label}
-              </Box>
+              </Tooltip>
             );
           })}
+
+          {/* Upgrade CTA for free users / Meu Plano for premium */}
+          {isPremium ? (
+            <Box
+              onClick={() => router.push('/pricing')}
+              sx={{
+                display: 'flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, borderRadius: 2,
+                cursor: 'pointer', fontWeight: 700, fontSize: '0.875rem',
+                color: pathname === '/pricing' ? '#7C3AED' : '#7C3AED',
+                backgroundColor: pathname === '/pricing' ? 'rgba(124,58,237,0.1)' : 'rgba(124,58,237,0.06)',
+                transition: 'all 0.15s ease',
+                '&:hover': { backgroundColor: 'rgba(124,58,237,0.12)' },
+              }}
+            >
+              <WorkspacePremiumOutlined sx={{ fontSize: 16 }} />
+              Meu Plano
+            </Box>
+          ) : (
+            <Box
+              onClick={() => router.push('/pricing')}
+              sx={{
+                display: 'flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, borderRadius: 2,
+                cursor: 'pointer', fontWeight: 700, fontSize: '0.875rem',
+                color: '#7C3AED',
+                background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(99,102,241,0.1))',
+                border: '1px solid rgba(124,58,237,0.15)',
+                transition: 'all 0.15s ease',
+                '&:hover': { background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(99,102,241,0.15))' },
+              }}
+            >
+              <WorkspacePremiumOutlined sx={{ fontSize: 16 }} />
+              Upgrade
+            </Box>
+          )}
         </Box>
       </Box>
 

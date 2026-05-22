@@ -20,6 +20,7 @@ import {
 import useSWR from 'swr';
 import { useProtocol } from '@/lib/hooks/useDashboard';
 import { waterLogApi, DayHistory } from '@/lib/api/water-log';
+import PremiumGate from '@/components/ui/PremiumGate';
 
 function useMonthHistory() {
   const { data, isLoading } = useSWR(
@@ -215,6 +216,7 @@ export default function HydrationPage() {
   }));
 
   return (
+    <PremiumGate feature="Análise de Hidratação">
     <Box sx={{ px: { xs: 2, sm: 4, md: 6 }, py: { xs: 3, md: 4 }, maxWidth: 1280, mx: 'auto' }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.02em' }}>
@@ -340,5 +342,6 @@ export default function HydrationPage() {
         </Grid>
       </Grid>
     </Box>
+    </PremiumGate>
   );
 }

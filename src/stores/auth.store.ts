@@ -13,6 +13,7 @@ interface AuthState {
   setTokens: (token: string, refreshToken: string) => void;
   setOnboardingDone: () => void;
   setAvatar: (avatarUrl: string) => void;
+  setPremium: (isPremium: boolean) => void;
   logout: () => void;
 }
 
@@ -39,6 +40,9 @@ export const useAuthStore = create<AuthState>()(
 
       setAvatar: (avatarUrl) =>
         set((state) => ({ user: state.user ? { ...state.user, avatarUrl } : state.user })),
+
+      setPremium: (isPremium) =>
+        set((state) => ({ user: state.user ? { ...state.user, isPremium } : state.user })),
 
       logout: () => {
         Cookies.remove('waterday_token');
